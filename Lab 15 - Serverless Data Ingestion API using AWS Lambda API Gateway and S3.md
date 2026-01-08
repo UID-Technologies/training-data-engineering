@@ -107,6 +107,53 @@ def lambda_handler(event, context):
     }
 ```
 
+or
+
+```yaml
+import json
+import boto3
+import datetime
+import os
+import base64
+s3 = boto3.client("s3")
+BUCKET_NAME = os.environ.get("BUCKET_NAME")
+def lambda_handler(event, context):
+    if not event.get("body"):
+        return {
+            "statusCode": 400,
+            "body": json.dumps({"error": "Request body missing"})
+        }
+    body_raw = event["body"]
+    if event.get("isBase64Encoded"):
+        body_raw = base64.b64decode(body_raw)
+    body = json.loads(body_raw)
+    required = ["customer_id", "amount", "timestamp"]
+    missing = [k for k in required if k not in body]
+    if missing:
+        return {
+            "statusCode": 400,
+            "body": json.dumps({"error": "Missing fields", "fields": missing})
+        }
+    body["ingested_at"] = datetime.datetime.utcnow().isoformat()
+    key = "ingested/{0}_{1}.json".format(
+        body["customer_id"],
+        int(datetime.datetime.utcnow().strftime("%s"))
+    )
+    s3.put_object(
+        Bucket=BUCKET_NAME,
+        Key=key,
+        Body=json.dumps(body),
+        ContentType="application/json"
+    )
+    return {
+        "statusCode": 200,
+        "body": json.dumps({
+            "message": "Uploaded",
+            "file": key
+        })
+    }
+```
+
 ---
 
 ##  **Step 3: Add Environment Variable**
