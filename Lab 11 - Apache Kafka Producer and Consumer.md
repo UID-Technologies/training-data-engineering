@@ -78,6 +78,55 @@ docker compose up -d
 docker ps
 ```
 
+```bash
+
+> docker-compose up -d
+
+> docker ps
+
+> docker exec -it kafka /bin/bash
+
+> cd /opt/kafka_2.13-2.8.1/bin/
+
+> ls
+
+connect-distributed.sh        kafka-console-producer.sh    kafka-log-dirs.sh                    kafka-server-start.sh               windows
+connect-mirror-maker.sh       kafka-consumer-groups.sh     kafka-metadata-shell.sh              kafka-server-stop.sh                zookeeper-security-migration.sh
+connect-standalone.sh         kafka-consumer-perf-test.sh  kafka-mirror-maker.sh                kafka-storage.sh                    zookeeper-server-start.sh
+kafka-acls.sh                 kafka-delegation-tokens.sh   kafka-preferred-replica-election.sh  kafka-streams-application-reset.sh  zookeeper-server-stop.sh
+kafka-broker-api-versions.sh  kafka-delete-records.sh      kafka-producer-perf-test.sh          kafka-topics.sh                     zookeeper-shell.sh
+kafka-cluster.sh              kafka-dump-log.sh            kafka-reassign-partitions.sh         kafka-verifiable-consumer.sh
+kafka-configs.sh              kafka-features.sh            kafka-replica-verification.sh        kafka-verifiable-producer.sh
+kafka-console-consumer.sh     kafka-leader-election.sh     kafka-run-class.sh                   trogdor.sh
+
+
+
+# Create a topic
+
+> kafka-topics.sh --create --topic test-topic --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+
+Created topic test-topic.
+root@603bdde9beb5:/opt/kafka_2.13-2.8.1/bin#
+
+# List of Topic
+> kafka-topics.sh --list --bootstrap-server localhost:9092
+
+
+# Start Producer
+> docker exec -it <container_id> bash
+> cd /opt/kafka_2.13-2.8.1/bin
+> ls
+kafka-console-producer.sh --bootstrap-server localhost:9092 --topic test-topic
+
+
+# Start Consumer
+> docker exec -it <container_id> bash
+> cd /opt/kafka_2.13-2.8.1/bin
+> ls
+ kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test-topic --from-beginning
+
+```
+
 ### 1) Create a topic (Why: storage unit for events)
 
 ```powershell
