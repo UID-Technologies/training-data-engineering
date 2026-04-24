@@ -50,6 +50,27 @@ services:
 
 > This uses Confluent’s Docker images (common for local labs). ([Confluent Documentation][8])
 
+Or
+
+```yaml
+version: '3'
+
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+```
+
 Start it:
 
 ```powershell
