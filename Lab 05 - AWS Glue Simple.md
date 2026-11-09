@@ -96,6 +96,24 @@ aws s3 cp "s3://awsglue-datasets/examples/us-legislators/all/" `
           "s3://$env:S3_DATA/raw/us-legislators/" --recursive
 ```
 
+If you get an error from above command follow below mention command
+
+```bash
+New-Item -ItemType Directory -Force -Path ".\glue-data"
+
+Invoke-WebRequest `
+  -Uri "https://raw.githubusercontent.com/awslabs/aws-glue-samples/master/examples/legislators/legislators.json" `
+  -OutFile ".\glue-data\legislators.json"
+
+Invoke-WebRequest `
+  -Uri "https://raw.githubusercontent.com/awslabs/aws-glue-samples/master/examples/legislators/persons.json" `
+  -OutFile ".\glue-data\persons.json"
+
+Invoke-WebRequest `
+  -Uri "https://raw.githubusercontent.com/awslabs/aws-glue-samples/master/examples/legislators/memberships.json" `
+  -OutFile ".\glue-data\memberships.json"
+```
+
 ---
 
 ### **Step 3. Create Glue Database + Crawler**
