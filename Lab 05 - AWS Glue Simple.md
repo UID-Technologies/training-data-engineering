@@ -99,19 +99,34 @@ aws s3 cp "s3://awsglue-datasets/examples/us-legislators/all/" `
 If you get an error from above command follow below mention command
 
 ```bash
-New-Item -ItemType Directory -Force -Path ".\glue-data"
+New-Item -ItemType Directory -Force ".\glue-data"
 
-Invoke-WebRequest `
-  -Uri "https://raw.githubusercontent.com/awslabs/aws-glue-samples/master/examples/legislators/legislators.json" `
-  -OutFile ".\glue-data\legislators.json"
+@'
+{"id":"p001","name":"John Smith","gender":"male"}
+{"id":"p002","name":"Jane Doe","gender":"female"}
+{"id":"p003","name":"Robert Lee","gender":"male"}
+'@ | Set-Content ".\glue-data\persons.json" -Encoding ascii
 
-Invoke-WebRequest `
-  -Uri "https://raw.githubusercontent.com/awslabs/aws-glue-samples/master/examples/legislators/persons.json" `
-  -OutFile ".\glue-data\persons.json"
+@'
+{"person_id":"p001","organization_id":"house","role":"Representative"}
+{"person_id":"p002","organization_id":"senate","role":"Senator"}
+{"person_id":"p003","organization_id":"house","role":"Representative"}
+'@ | Set-Content ".\glue-data\memberships.json" -Encoding ascii
 
-Invoke-WebRequest `
-  -Uri "https://raw.githubusercontent.com/awslabs/aws-glue-samples/master/examples/legislators/memberships.json" `
-  -OutFile ".\glue-data\memberships.json"
+@'
+{"id":"house","name":"House of Representatives"}
+{"id":"senate","name":"Senate"}
+'@ | Set-Content ".\glue-data\organizations.json" -Encoding ascii
+```
+Upload each dataset to a separate S3 prefix so the crawler can discover separate tables:
+
+```bash
+foreach ($name in @("persons", "memberships", "organizations")) {
+    aws s3 cp `
+      ".\glue-data\$name.json" `
+      "s3://$env:S3_DATA/raw/us-legislators/$name/$name.json" `
+      --region $env:REGION
+}
 ```
 
 ---
